@@ -52,6 +52,18 @@ func (lb *logbuf) Push(lv LogLevel, t uint64, b []byte) {
 	lb.mu.Unlock()
 }
 
+func (lb *logbuf) PushString(lv LogLevel, t uint64, s string) {
+	lb.mu.Lock()
+	i := len(lb.data)
+	lb.data = append(lb.data, s...)
+	lb.logs = append(lb.logs, logEntry{
+		idx: i,
+		t:   t,
+		lv:  lv,
+	})
+	lb.mu.Unlock()
+}
+
 func NewLogger(f Upstream) *Logger {
 	return &Logger{
 		f:           f,
